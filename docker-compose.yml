@@ -1,0 +1,56 @@
+services:
+  opencode-bot:
+    container_name: opencode-telegram-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      # === Required ===
+      TELEGRAM_BOT_TOKEN:        ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_ALLOWED_USER_ID:  ${TELEGRAM_ALLOWED_USER_ID}
+      OPENROUTER_API_KEY:        ${OPENROUTER_API_KEY}
+      GITHUB_TOKEN:              ${GITHUB_TOKEN}
+
+      # === LLM routing for Telegram bot (consumed by @grinev/opencode-telegram-bot) ===
+      OPENCODE_MODEL_PROVIDER:   ${OPENCODE_MODEL_PROVIDER:-openrouter}
+      OPENCODE_MODEL_ID:         ${OPENCODE_MODEL_ID:-deepseek/deepseek-v3.2-exp}
+
+      # === Git identity ===
+      GIT_USER_NAME:       ${GIT_USER_NAME:-Paradigm OpenCode Bot}
+      GIT_USER_EMAIL:      ${GIT_USER_EMAIL:-bot@paradigm.local}
+
+      # === Boot-favorite repos (auto-clone on startup; rest is lazy via gh) ===
+      WORKSPACES_REPOS:    ${WORKSPACES_REPOS:-}
+
+      # === Synergy: Slack notification + Paperclip dispatch ===
+      SLACK_WEBHOOK_URL:   ${SLACK_WEBHOOK_URL:-}
+      PAPERCLIP_API_TOKEN: ${PAPERCLIP_API_TOKEN:-}
+
+      # === MCP credentials referenced by opencode.json ===
+      SUPABASE_ACCESS_TOKEN: ${SUPABASE_ACCESS_TOKEN:-}
+
+      NODE_ENV: production
+    volumes:
+      - opencode-workspaces:/workspaces
+      - opencode-state:/root/.local/share/opencode
+      - opencode-cache:/root/.npm
+      - opencode-gh-config:/root/.config/gh
+
+    # Resource caps — share Droplet politely with Paperclip/Hermes/etc.
+    mem_limit: 1536m
+    memswap_limit: 2048m
+    cpus: '1.50'
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:4096/app || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+volumes:
+  opencode-workspaces:
+  opencode-state:
+  opencode-cache:
+  opencode-gh-config:

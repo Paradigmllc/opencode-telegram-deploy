@@ -1,0 +1,65 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoshare": false,
+  "autoupdate": false,
+  "theme": "system",
+
+  "provider": {
+    "openrouter": {
+      "npm": "@openrouter/ai-sdk-provider",
+      "options": {
+        "apiKey": "{env:OPENROUTER_API_KEY}",
+        "headers": {
+          "HTTP-Referer": "https://github.com/Paradigmllc/dotfiles",
+          "X-Title": "Paradigm OpenCode Telegram"
+        }
+      },
+      "models": {
+        "deepseek/deepseek-v3.2-exp": {
+          "name": "DeepSeek V4 PRO (default — heavy reasoning + cache hit)"
+        },
+        "deepseek/deepseek-chat-v3.1": {
+          "name": "DeepSeek V4 Flash (small_model — cheap routing)"
+        },
+        "moonshotai/kimi-k2": {
+          "name": "Kimi K2 (long-context fallback)"
+        },
+        "anthropic/claude-sonnet-4.5": {
+          "name": "Claude Sonnet 4.5 (escalation only — UU rule)"
+        }
+      }
+    }
+  },
+
+  "model": "openrouter/deepseek/deepseek-v3.2-exp",
+  "small_model": "openrouter/deepseek/deepseek-chat-v3.1",
+
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+    "supabase": {
+      "type": "local",
+      "command": [
+        "npx", "-y", "@supabase/mcp-server-supabase@latest",
+        "--access-token", "{env:SUPABASE_ACCESS_TOKEN}"
+      ],
+      "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_TOKEN}"
+      },
+      "enabled": true
+    }
+  },
+
+  "instructions": [
+    "/workspaces/dotfiles-private/CLAUDE.md",
+    "/app/scripts/AGENT_GUIDANCE.md"
+  ]
+}
