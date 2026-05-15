@@ -110,6 +110,25 @@ export OPENCODE_MODEL_PROVIDER="${OPENCODE_MODEL_PROVIDER:-openrouter}"
 export OPENCODE_MODEL_ID="${OPENCODE_MODEL_ID:-deepseek/deepseek-v3.2-exp}"
 export OPEN_BROWSER_ROOTS="${OPEN_BROWSER_ROOTS:-/workspaces}"
 
+# Bot loads config from $XDG_CONFIG_HOME/opencode-telegram-bot/.env (default ~/.config/...).
+# Pre-create it so the interactive wizard never runs (TTY not available in container).
+APP_HOME="${OPENCODE_TELEGRAM_HOME:-/root/.config/opencode-telegram-bot}"
+mkdir -p "$APP_HOME"
+cat > "$APP_HOME/.env" <<EOF
+TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
+TELEGRAM_ALLOWED_USER_ID=$TELEGRAM_ALLOWED_USER_ID
+OPENCODE_API_URL=$OPENCODE_API_URL
+OPENCODE_MODEL_PROVIDER=$OPENCODE_MODEL_PROVIDER
+OPENCODE_MODEL_ID=$OPENCODE_MODEL_ID
+OPEN_BROWSER_ROOTS=$OPEN_BROWSER_ROOTS
+EOF
+chmod 600 "$APP_HOME/.env"
+# Bot also expects a settings.json — minimal placeholder makes the "configured" check pass
+cat > "$APP_HOME/settings.json" <<'EOF'
+{"configured": true}
+EOF
+log "Pre-seeded $APP_HOME/.env + settings.json (skips interactive wizard)"
+
 log "Starting opencode-telegram (provider=$OPENCODE_MODEL_PROVIDER, model=$OPENCODE_MODEL_ID) …"
 opencode-telegram start 2>&1 | sed 's/^/[bot] /' &
 BOT_PID=$!
