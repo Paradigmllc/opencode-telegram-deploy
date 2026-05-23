@@ -107,7 +107,7 @@ trap shutdown SIGTERM SIGINT
 #   OPENCODE_MODEL_PROVIDER, OPENCODE_MODEL_ID
 export OPENCODE_API_URL="http://127.0.0.1:4096"
 export OPENCODE_MODEL_PROVIDER="${OPENCODE_MODEL_PROVIDER:-openrouter}"
-export OPENCODE_MODEL_ID="${OPENCODE_MODEL_ID:-deepseek/deepseek-v3.2-exp}"
+export OPENCODE_MODEL_ID="${OPENCODE_MODEL_ID:-deepseek-v4-pro}"
 export OPEN_BROWSER_ROOTS="${OPEN_BROWSER_ROOTS:-/workspaces}"
 
 # Bot loads config from $XDG_CONFIG_HOME/opencode-telegram-bot/.env (default ~/.config/...).
@@ -129,8 +129,11 @@ cat > "$APP_HOME/settings.json" <<'EOF'
 EOF
 log "Pre-seeded $APP_HOME/.env + settings.json (skips interactive wizard)"
 
+log "Deleting any existing Telegram webhook to prevent 409 Conflict loops …"
+curl -sS -m 10 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/deleteWebhook" >/dev/null 2>&1 || log "WARN: Failed to delete Telegram webhook"
+
 log "Starting opencode-telegram (provider=$OPENCODE_MODEL_PROVIDER, model=$OPENCODE_MODEL_ID) …"
-opencode-telegram start 2>&1 | sed 's/^/[bot] /' &
+opencode-telegram start --mode installed 2>&1 | sed 's/^/[bot] /' &
 BOT_PID=$!
 
 # Wait for first child to exit, then shutdown

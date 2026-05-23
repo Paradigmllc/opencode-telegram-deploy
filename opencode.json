@@ -5,47 +5,40 @@
   "theme": "system",
 
   "provider": {
-    "openrouter": {
-      "npm": "@openrouter/ai-sdk-provider",
+    "litellm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LiteLLM (Paradigm proxy)",
       "options": {
-        "apiKey": "{env:OPENROUTER_API_KEY}",
-        "headers": {
-          "HTTP-Referer": "https://github.com/Paradigmllc/dotfiles",
-          "X-Title": "Paradigm OpenCode Telegram"
-        }
+        "apiKey": "{env:LITELLM_API_KEY}",
+        "baseURL": "https://litellm.appexx.me/v1"
       },
       "models": {
-        "deepseek/deepseek-v3.2-exp": {
-          "name": "DeepSeek V4 PRO (default — heavy reasoning + cache hit)"
+        "deepseek-v4-pro": {
+          "name": "DeepSeek V4 PRO — R1 reasoner (chain-of-thought, main model)"
         },
-        "deepseek/deepseek-chat-v3.1": {
-          "name": "DeepSeek V4 Flash (small_model — cheap routing)"
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash — DeepSeek Chat V3 (small_model, cheap routing)"
         },
-        "moonshotai/kimi-k2": {
-          "name": "Kimi K2 (long-context fallback)"
+        "kimi-k2": {
+          "name": "Kimi K2 via OpenRouter — long-context fallback (out of credits — top-up needed)"
         },
-        "anthropic/claude-sonnet-4.5": {
-          "name": "Claude Sonnet 4.5 (escalation only — UU rule)"
+        "gpt-4o-mini": {
+          "name": "GPT-4o-mini alias → DeepSeek Chat (compat for hardcoded clients)"
+        },
+        "gpt-5-nano": {
+          "name": "GPT-5 nano alias → DeepSeek Chat (compat for hardcoded clients)"
         }
       }
     }
   },
 
-  "model": "openrouter/deepseek/deepseek-v3.2-exp",
-  "small_model": "openrouter/deepseek/deepseek-chat-v3.1",
+  "model": "litellm/deepseek-v4-pro",
+  "small_model": "litellm/deepseek-v4-pro",
 
   "mcp": {
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
-      "enabled": true
-    },
-    "supabase": {
-      "type": "local",
-      "command": [
-        "npx", "-y", "@supabase/mcp-server-supabase@latest",
-        "--access-token", "{env:SUPABASE_ACCESS_TOKEN}"
-      ],
       "enabled": true
     },
     "github": {
