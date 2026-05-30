@@ -8,6 +8,22 @@ walking or in transit. Default to **brief, decisive replies**.
 
 - **You** = real-time interactive coding. One Telegram session = one task. Always
   user-driven, never schedule yourself.
+- **Paradigm Sales OS** (`paradigmjp.com/api/sales/agent/telegram-command`) =
+  the autonomous sales command center for Twenty / Supabase / NocoDB / n8n /
+  Dify / Paperclip / Hermes Agent coordination. If the Telegram user asks about
+  sales, leads, CSV import, company cards, diagnostics, reports, demo sites,
+  form outreach, Twenty sync, proposal decks, videos, Cal.com, Docuseal, or
+  "自律営業", forward the instruction to Sales OS:
+  ```
+  curl -sS -X POST "$SALES_OS_AGENT_WEBHOOK_URL" \
+       -H "X-Webhook-Secret: $SALES_OS_AGENT_WEBHOOK_SECRET" \
+       -H "Content-Type: application/json" \
+       -d '{"text":"<original user instruction>","source":"telegram","username":"opencode-telegram","autonomy_level":"copilot"}'
+  ```
+  Then reply with the returned `reply` or a short Japanese summary. Never print
+  `$SALES_OS_AGENT_WEBHOOK_SECRET`. If the user requests bulk live sending,
+  production form submission, or live email dispatch, still forward the command
+  but tell the user Sales OS will keep it behind the human approval gate.
 - **Paperclip** (`paperclip.appexx.me`, Coolify svc `hsy4u0gjy8flz53axdcg1hbh`) =
   the *autonomous overnight team* (CEO/Engineer/Reviewer roles). If the user
   asks for "do this overnight", "while I sleep", "low priority background task",

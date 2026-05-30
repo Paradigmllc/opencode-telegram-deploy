@@ -26,6 +26,8 @@ services:
       # === Synergy: Slack notification + Paperclip dispatch ===
       SLACK_WEBHOOK_URL:   ${SLACK_WEBHOOK_URL:-}
       PAPERCLIP_API_TOKEN: ${PAPERCLIP_API_TOKEN:-}
+      SALES_OS_AGENT_WEBHOOK_URL:    ${SALES_OS_AGENT_WEBHOOK_URL:-}
+      SALES_OS_AGENT_WEBHOOK_SECRET: ${SALES_OS_AGENT_WEBHOOK_SECRET:-}
 
       # === MCP credentials referenced by opencode.json ===
       SUPABASE_ACCESS_TOKEN: ${SUPABASE_ACCESS_TOKEN:-}
